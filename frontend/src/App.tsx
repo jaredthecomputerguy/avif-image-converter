@@ -76,12 +76,12 @@ const App = () => {
   };
 
   return (
-    <main className="h-screen flex flex-col items-center justify-center py-8">
+    <main className="h-screen flex flex-col items-center justify-center">
       <h1 className="text-4xl py-16">Image Converter</h1>
-      <div className="flex flex-col gap-8 text-center pb-32">
+      <div className="flex flex-col gap-8 text-center pb-6">
         <div
           {...getRootProps()}
-          className="hover:bg-zinc-100/5 w-[1000px] h-[200px]"
+          className="hover:bg-zinc-100/5"
           style={dropzoneStyles}
         >
           <input {...getInputProps()} />
@@ -89,9 +89,8 @@ const App = () => {
         </div>
         {convertedFileUrl ? (
           <div className="flex flex-col items-center gap-6">
-            <h2 className="text-xl">Converted File</h2>
             <img
-              className="w-64 h-64 cursor-pointer object-contain border border-gray-100/25 rounded-lg p-2 hover:border-gray-100 hover:bg-zinc-100/5 focus:border-gray-100 focus:bg-zinc-100/5"
+              className="w-48 h-48 cursor-pointer object-contain border border-gray-100/25 rounded-lg p-2 hover:border-gray-100 hover:bg-zinc-100/5 focus:border-gray-100 focus:bg-zinc-100/5"
               src={fileUrl}
               alt="Converted image"
               onClick={downloadImage}
@@ -107,7 +106,7 @@ const App = () => {
           <div></div>
         )}
       </div>
-      <footer className="fixed bottom-6">
+      <footer className="fixed bottom-2 bg-slate-800 p-2 rounded-lg">
         Made by{" "}
         <a
           className="text-cyan-600 hover:text-cyan-400 focus:text-cyan-400 active:text-cyan-400"
