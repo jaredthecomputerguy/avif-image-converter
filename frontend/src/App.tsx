@@ -81,7 +81,7 @@ const App = () => {
       <div className="flex flex-col gap-8 text-center pb-32">
         <div
           {...getRootProps()}
-          className="hover:bg-zinc-100/5"
+          className="hover:bg-zinc-100/5 w-[1000px] h-[200px]"
           style={dropzoneStyles}
         >
           <input {...getInputProps()} />
