@@ -46,7 +46,7 @@ app.post("/convert", upload.single("file"), async (req, res) => {
 
     // Return the URL for the stored image
     const imageUrl = `/uploads/${fileName}`;
-    res.json({ imageUrl, fileName: fileName });
+    res.json({ imageUrl, fileName });
   } catch (error) {
     console.error("Error during conversion:", error);
     res.status(500).json({ error: "Error during conversion." });

@@ -7,11 +7,15 @@ const App = () => {
   const [convertedFileName, setConvertedFileName] = useState<string | null>(
     null
   );
+  const [error, setError] = useState<string | null>(null)
 
   const fileUrl = `http://localhost:8000${convertedFileUrl}`;
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     const selectedFile = acceptedFiles[0];
+
+    setError("");
+
     try {
       if (selectedFile) {
         const formData = new FormData();
@@ -28,8 +32,9 @@ const App = () => {
       } else {
         console.error("No file selected");
       }
-    } catch (error) {
-      console.error("Error uploading file:", error);
+    } catch (err) {
+      console.error("Error uploading file:", err);
+      setError(err.response.data.error);
     }
   }, []);
 
@@ -87,6 +92,7 @@ const App = () => {
           <input {...getInputProps()} />
           <p>Drag & drop an image here, or click to select one</p>
         </div>
+        {error && <p className="text-red-500 text-sm">{error}</p>}
         {convertedFileUrl ? (
           <div className="flex flex-col items-center gap-6">
             <img
