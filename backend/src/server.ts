@@ -4,6 +4,7 @@ import * as sharp from "sharp";
 import path from "path";
 import fs from "fs";
 import cors from "cors";
+import convert from "heic-convert";
 
 const app = express();
 const port = 8000;
@@ -32,21 +33,43 @@ app.post("/convert", upload.single("file"), async (req, res) => {
       return res.status(400).json({ error: "No file was provided." });
     }
 
-    const avifContent = req.file?.buffer;
+    console.log(req.file.mimetype);
 
-    // Use sharp to convert avif to png
-    const pngBuffer = await sharp.default(avifContent).png().toBuffer();
+    if (req.file.mimetype !== "application/octet-stream") {
+      const avifContent = req.file?.buffer;
 
-    // Generate a unique filename (you may use a better strategy)
-    const fileName = `${originalName}.png`;
-    const filePath = path.join(uploadFolder, fileName);
+      // Use sharp to convert avif to png
+      const pngBuffer = await sharp.default(avifContent).png().toBuffer();
 
-    // Save the converted image to the local folder
-    fs.writeFileSync(filePath, pngBuffer);
+      // Generate a unique filename (you may use a better strategy)
+      const fileName = `${originalName}.png`;
+      const filePath = path.join(uploadFolder, fileName);
 
-    // Return the URL for the stored image
-    const imageUrl = `/uploads/${fileName}`;
-    res.json({ imageUrl, fileName });
+      // Save the converted image to the local folder
+      fs.writeFileSync(filePath, pngBuffer);
+
+      // Return the URL for the stored image
+      const imageUrl = `/uploads/${fileName}`;
+      res.json({ imageUrl, fileName });
+    } else {
+      const heicContent = req.file?.buffer;
+
+      const pngBuffer = await convert({
+        buffer: heicContent,
+        format: "PNG",
+        quality: 1,
+      });
+
+      const fileName = `${originalName}.png`;
+      const filePath = path.join(uploadFolder, fileName);
+
+      // Save the converted image to the local folder
+      fs.writeFileSync(filePath, Buffer.from(pngBuffer));
+
+      // Return the URL for the stored image
+      const imageUrl = `/uploads/${fileName}`;
+      res.json({ imageUrl, fileName });
+    }
   } catch (error) {
     console.error("Error during conversion:", error);
     res.status(500).json({ error: "Error during conversion." });

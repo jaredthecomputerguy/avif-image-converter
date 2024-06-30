@@ -5,9 +5,9 @@ import { useDropzone } from "react-dropzone";
 const App = () => {
   const [convertedFileUrl, setConvertedFileUrl] = useState<string | null>(null);
   const [convertedFileName, setConvertedFileName] = useState<string | null>(
-    null
+    null,
   );
-  const [error, setError] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null);
 
   const fileUrl = `http://localhost:8000${convertedFileUrl}`;
 
@@ -23,7 +23,7 @@ const App = () => {
 
         const response = await axios.post(
           "http://localhost:8000/convert",
-          formData
+          formData,
         );
 
         console.log("File uploaded successfully:", response.data);
@@ -33,8 +33,14 @@ const App = () => {
         console.error("No file selected");
       }
     } catch (err) {
-      console.error("Error uploading file:", err);
-      setError(err.response.data.error);
+      if (err instanceof Error) {
+        console.error("Error uploading file:", err);
+        setError(err.message);
+      } else {
+        console.error("Error uploading file:", err);
+        // @ts-expect-error Not sure how to type narrow this
+        setError(err.response.data.error);
+      }
     }
   }, []);
 
@@ -81,9 +87,9 @@ const App = () => {
   };
 
   return (
-    <main className="h-screen flex flex-col items-center justify-center">
-      <h1 className="text-4xl py-16">Image Converter</h1>
-      <div className="flex flex-col gap-8 text-center pb-6">
+    <main className="flex h-screen flex-col items-center justify-center">
+      <h1 className="py-16 text-4xl">Image Converter</h1>
+      <div className="flex flex-col gap-8 pb-6 text-center">
         <div
           {...getRootProps()}
           className="hover:bg-zinc-100/5"
@@ -92,27 +98,33 @@ const App = () => {
           <input {...getInputProps()} />
           <p>Drag & drop an image here, or click to select one</p>
         </div>
-        {error && <p className="text-red-500 text-sm">{error}</p>}
+        {error && <p className="text-sm text-red-500">{error}</p>}
         {convertedFileUrl ? (
           <div className="flex flex-col items-center gap-6">
             <img
-              className="w-48 h-48 cursor-pointer object-contain border border-gray-100/25 rounded-lg p-2 hover:border-gray-100 hover:bg-zinc-100/5 focus:border-gray-100 focus:bg-zinc-100/5"
+              className="h-48 w-48 cursor-pointer rounded-lg border border-gray-100/25 object-contain p-2 hover:border-gray-100 hover:bg-zinc-100/5 focus:border-gray-100 focus:bg-zinc-100/5"
               src={fileUrl}
               alt="Converted image"
               onClick={downloadImage}
             />
             <button
-              className="border border-gray-100/25 p-4 rounded-lg hover:border-gray-100 hover:bg-zinc-100/5 focus:border-gray-100 focus:bg-zinc-100/5"
+              className="rounded-lg border border-gray-100/25 p-4 hover:border-gray-100 hover:bg-zinc-100/5 focus:border-gray-100 focus:bg-zinc-100/5"
               onClick={downloadImage}
             >
-              Download Image
+              Download Image (Chrome)
             </button>
+            <a
+              href={`/uploads/${convertedFileUrl}`}
+              download={convertedFileName}
+            >
+              Download Image (Firefox)
+            </a>
           </div>
         ) : (
           <div></div>
         )}
       </div>
-      <footer className="fixed bottom-2 bg-slate-800 p-2 rounded-lg">
+      <footer className="fixed bottom-2 rounded-lg bg-slate-800 p-2">
         Made by{" "}
         <a
           className="text-cyan-600 hover:text-cyan-400 focus:text-cyan-400 active:text-cyan-400"
