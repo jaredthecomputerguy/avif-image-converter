@@ -33,8 +33,6 @@ app.post("/convert", upload.single("file"), async (req, res) => {
       return res.status(400).json({ error: "No file was provided." });
     }
 
-    console.log(req.file.mimetype);
-
     if (req.file.mimetype !== "application/octet-stream") {
       const avifContent = req.file?.buffer;
 
